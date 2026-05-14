@@ -86,6 +86,7 @@ Call the pop-up from a button:
 ```yaml
 type: custom:bubble-card
 card_type: button
+button_type: name
 button_action:
   tap_action:
     action: navigate
