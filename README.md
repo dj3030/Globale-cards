@@ -1,5 +1,3 @@
-# Globale-cards
-Lets you maintain a single source dashboard for pop-ups, headers, and shared UI, then inject them into any other dashboard without duplicating YAML
 # Global Cards
 
 A custom [Home Assistant](https://www.home-assistant.io) Lovelace card that lets you define cards once on a central dashboard and reuse them across multiple dashboards — without duplicating YAML.
