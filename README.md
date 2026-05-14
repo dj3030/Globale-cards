@@ -65,7 +65,7 @@ source_view: popups                         # optional: specific view path or ti
 
 ### Global Bubble Card pop-ups
 
-Define your pop-ups once on a `global-cards` dashboard:
+Define your bubble card pop-ups once on a `global-cards` dashboard:
 
 ```yaml
 # On your "global-cards" dashboard
@@ -105,8 +105,6 @@ type: custom:global-cards
 source_dashboard: global-cards-dashboard
 source_view: header
 mode: inline
-grid_options:
-  columns: full
 ```
 
 -----
