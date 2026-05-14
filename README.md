@@ -4,7 +4,7 @@ A custom [Home Assistant](https://www.home-assistant.io) Lovelace card that lets
 
 ## What it does
 
-- **Popup mode** *(default)*: Loads cards (e.g. Bubble Card pop-ups) from a source dashboard into the current dashboard’s DOM. Pop-ups become accessible via their hash (e.g. `#my-popup`) from anywhere on the page.
+- **Popup mode** *(default)*: Loads cards (e.g. Bubble Card pop-ups) from a source dashboard into the current dashboard. Pop-ups become accessible via their hash (e.g. `#my-popup`) from anywhere on the page.
 - **Inline mode**: Renders cards visually in place — useful for global headers or shared UI sections.
 
 The card is completely invisible when not in edit mode and takes no space in the dashboard layout.
