@@ -235,7 +235,7 @@ class GlobalCards extends HTMLElement {
   async _loadCards() {
     const myLoadId = ++this._loadId;
 
-    if (!this._config.source_dashboard) return;
+    if (!this._config.source_dashboard?.trim()) return;
 
     // Popup: reuse existing container in hui-root
     if (!this._isInline()) {
@@ -489,6 +489,14 @@ class GlobalCards extends HTMLElement {
 }
 
 customElements.define('global-cards', GlobalCards);
+
+window.customCards = window.customCards || [];
+window.customCards.push({
+  type: 'global-cards',
+  name: 'Global Cards',
+  description: 'Define cards once, reuse them across multiple dashboards.',
+  preview: false,
+});
 
 // ─── Editor ───────────────────────────────────────────────────────────────────
 
