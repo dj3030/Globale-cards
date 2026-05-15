@@ -28,8 +28,24 @@ class GlobalCards extends HTMLElement {
   }
 
   setConfig(config) {
+    const prevSource = this._config.source_dashboard;
+    const prevView = this._config.source_view;
+    const prevMode = this._config.mode;
+
     this._config = config;
-    if (config.source_dashboard) {
+
+    const sourceChanged = config.source_dashboard !== prevSource
+      || config.source_view !== prevView;
+    const modeChanged = config.mode !== prevMode;
+
+    if ((sourceChanged || modeChanged) && this._loaded) {
+      // Reset and reload with new config
+      this._cleanup();
+      if (config.source_dashboard?.trim() && this._hass) {
+        this._loaded = true;
+        this._loadCards();
+      }
+    } else {
       this._updateVisibility();
     }
   }
@@ -243,6 +259,7 @@ class GlobalCards extends HTMLElement {
       if (existing) {
         this._container = existing;
         this._cards = Array.from(existing.children);
+        this._cardCount = this._cards.length;
         for (const card of this._cards) card.hass = this._hass;
         this._updateVisibility();
         return;
