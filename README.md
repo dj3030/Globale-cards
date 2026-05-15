@@ -115,3 +115,9 @@ mode: inline
 In edit mode, the card shows a status indicator with the source dashboard, view, and number of loaded cards. Outside edit mode it is completely invisible and takes no space in the layout.
 
 -----
+
+#Sponsor this project
+
+https://github.githubassets.com/assets/buy_me_a_coffee-63ed78263f6e.svg https://buymeacoffee.com/andreasdj3030
+
+-----
