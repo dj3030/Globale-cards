@@ -16,6 +16,7 @@ class GlobalCards extends HTMLElement {
     this.shadowRoot.appendChild(this._contentEl);
 
     this._cards = [];
+    this._cardCount = 0;
     this._container = null;
     this._loaded = false;
     this._loadId = 0;
@@ -57,6 +58,7 @@ class GlobalCards extends HTMLElement {
     this._loadId++;
     this._loaded = false;
     this._cards = [];
+    this._cardCount = 0;
 
     if (this._isInline() && this._container) {
       this._container.remove();
@@ -145,11 +147,22 @@ class GlobalCards extends HTMLElement {
   }
 
   _showEditCard() {
-    const count = this._cards.length;
-    const source = this._config.source_dashboard ?? '–';
+    const count = this._cardCount;
+    const source = this._config.source_dashboard;
     const view = this._config.source_view ?? 'all views';
-    const status = count > 0 ? `✓ ${count} card(s) loaded` : `⏳ Waiting for load...`;
-    const color = count > 0 ? '#4caf50' : '#f59e0b';
+
+    let status, color;
+    if (!source) {
+      status = '⚠️ No source view selected';
+      color = '#ef5350';
+    } else if (count > 0) {
+      status = `✓ ${count} card(s) loaded`;
+      color = '#4caf50';
+    } else {
+      status = `⏳ Waiting for load...`;
+      color = '#f59e0b';
+    }
+
     this._contentEl.innerHTML = `
       <div style="
         padding: 12px 16px; border-radius: 12px;
@@ -160,7 +173,7 @@ class GlobalCards extends HTMLElement {
         <span style="font-size:18px">🌐</span>
         <span>
           <b>global-cards</b><br/>
-          <span style="color:#aaa">${source} / ${view}<br/>${status}</span>
+          <span style="color:#aaa">${source ?? '–'} / ${view}<br/>${status}</span>
         </span>
       </div>`;
   }
@@ -179,7 +192,7 @@ class GlobalCards extends HTMLElement {
       `;
       this._contentEl.appendChild(badge);
     }
-    badge.textContent = `🌐 ${this._config.source_dashboard} / ${this._config.source_view ?? 'all views'} · ${this._cards.length} card(s)`;
+    badge.textContent = `🌐 ${this._config.source_dashboard} / ${this._config.source_view ?? 'all views'} · ${this._cardCount} card(s)`;
   }
 
   _hideEditBadge() {
@@ -283,6 +296,7 @@ class GlobalCards extends HTMLElement {
             sectionEl.index = 0;
             sectionEl.viewIndex = 0;
             this._cards.push(sectionEl);
+            this._cardCount = structure.sections[0].cards?.length ?? 0;
             this._container.appendChild(sectionEl);
           } else {
             this._container.style.cssText = `
@@ -301,6 +315,7 @@ class GlobalCards extends HTMLElement {
                 card.style.gridColumn = (!cols || cols === 'full') ? 'span 12' : `span ${cols}`;
                 if (cardConfig.grid_options?.rows) card.style.gridRow = `span ${cardConfig.grid_options.rows}`;
                 this._cards.push(card);
+                this._cardCount++;
                 this._container.appendChild(card);
               } catch (err) {
                 console.warn(`[global-cards] Could not create card "${cardConfig.type}":`, err);
@@ -328,6 +343,7 @@ class GlobalCards extends HTMLElement {
               sectionEl.index = i;
               sectionEl.viewIndex = 0;
               this._cards.push(sectionEl);
+              this._cardCount += section.cards?.length ?? 0;
               this._container.appendChild(sectionEl);
             } else {
               const sectionEl = document.createElement('div');
@@ -347,6 +363,7 @@ class GlobalCards extends HTMLElement {
                   card.style.gridColumn = (!cols || cols === 'full') ? 'span 12' : `span ${cols}`;
                   if (cardConfig.grid_options?.rows) card.style.gridRow = `span ${cardConfig.grid_options.rows}`;
                   this._cards.push(card);
+                  this._cardCount++;
                   sectionEl.appendChild(card);
                 } catch (err) {
                   console.warn(`[global-cards] Could not create card "${cardConfig.type}":`, err);
@@ -370,6 +387,7 @@ class GlobalCards extends HTMLElement {
             const card = await helpers.createCardElement(cardConfig);
             card.hass = this._hass;
             this._cards.push(card);
+            this._cardCount++;
             this._container.appendChild(card);
           } catch (err) {
             console.warn(`[global-cards] Could not create card "${cardConfig.type}":`, err);
@@ -399,6 +417,7 @@ class GlobalCards extends HTMLElement {
           card.hass = this._hass;
           card.style.pointerEvents = 'auto';
           this._cards.push(card);
+          this._cardCount++;
           this._container.appendChild(card);
         } catch (err) {
           console.warn(`[global-cards] Could not create card "${cardConfig.type}":`, err);
@@ -447,6 +466,7 @@ class GlobalCards extends HTMLElement {
     }
     this._contentEl.innerHTML = '';
     this._cards = [];
+    this._cardCount = 0;
     this._loaded = false;
   }
 
