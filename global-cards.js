@@ -27,11 +27,10 @@ class GlobalCards extends HTMLElement {
   }
 
   setConfig(config) {
-    if (!config.source_dashboard) {
-      throw new Error('[global-cards] source_dashboard is required');
-    }
     this._config = config;
-    this._updateVisibility();
+    if (config.source_dashboard) {
+      this._updateVisibility();
+    }
   }
 
   set hass(hass) {
@@ -222,6 +221,8 @@ class GlobalCards extends HTMLElement {
 
   async _loadCards() {
     const myLoadId = ++this._loadId;
+
+    if (!this._config.source_dashboard) return;
 
     // Popup: reuse existing container in hui-root
     if (!this._isInline()) {
@@ -453,6 +454,154 @@ class GlobalCards extends HTMLElement {
     if (this._isInline()) return 3;
     return this._isEditMode() ? 1 : 0;
   }
+
+  static getConfigElement() {
+    return document.createElement('global-cards-editor');
+  }
+
+  static getStubConfig() {
+    return {
+      source_dashboard: '',
+      source_view: '',
+      mode: 'popup',
+    };
+  }
 }
 
 customElements.define('global-cards', GlobalCards);
+
+// ─── Editor ───────────────────────────────────────────────────────────────────
+
+class GlobalCardsEditor extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this._config = {};
+    this._hass = null;
+    this._rendered = false;
+  }
+
+  set hass(hass) {
+    this._hass = hass;
+    if (!this._rendered) {
+      this._render();
+    } else {
+      const picker = this.shadowRoot.getElementById('nav-picker');
+      if (picker) picker.hass = hass;
+      const form = this.shadowRoot.getElementById('ha-form');
+      if (form) form.hass = hass;
+    }
+  }
+
+  setConfig(config) {
+    this._config = { ...config };
+    if (this._rendered) this._updateValues();
+  }
+
+  _currentPath() {
+    const { source_dashboard, source_view } = this._config;
+    if (!source_dashboard) return '';
+    return source_view
+      ? `/${source_dashboard}/${source_view}`
+      : `/${source_dashboard}`;
+  }
+
+  _render() {
+    if (!this._hass) return;
+    this._rendered = true;
+
+    this.shadowRoot.innerHTML = `
+      <style>
+        :host {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding: 16px 0;
+        }
+        label {
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--secondary-text-color);
+          text-transform: uppercase;
+          letter-spacing: 0.4px;
+        }
+        .row {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+        }
+      </style>
+      <div class="row">
+        <label>Source view</label>
+        <ha-navigation-picker id="nav-picker"></ha-navigation-picker>
+      </div>
+      <ha-form id="ha-form"></ha-form>
+    `;
+
+    // Navigation picker
+    const picker = this.shadowRoot.getElementById('nav-picker');
+    picker.hass = this._hass;
+    picker.label = 'Dashboard / View';
+    picker.addEventListener('value-changed', (e) => {
+      const path = (e.detail.value || '').replace(/^\//, '');
+      const parts = path.split('/');
+      this._config = {
+        ...this._config,
+        source_dashboard: parts[0] ?? '',
+        source_view: parts[1] ?? '',
+      };
+      this._fireConfigChanged();
+    });
+
+    // ha-form for mode
+    const form = this.shadowRoot.getElementById('ha-form');
+    form.hass = this._hass;
+    form.schema = [
+      {
+        name: 'mode',
+        label: 'Mode',
+        selector: {
+          select: {
+            mode: 'dropdown',
+            options: [
+              { value: 'popup', label: 'Popup (invisible)' },
+              { value: 'inline', label: 'Inline (visible)' },
+            ],
+          },
+        },
+      },
+    ];
+    form.computeLabel = (s) => s.label;
+    form.addEventListener('value-changed', (e) => {
+      const { mode } = e.detail.value;
+      if (mode !== undefined && mode !== this._config.mode) {
+        this._config = { ...this._config, mode };
+        this._fireConfigChanged();
+      }
+    });
+
+    this._updateValues();
+  }
+
+  _updateValues() {
+    const picker = this.shadowRoot.getElementById('nav-picker');
+    if (picker) {
+      picker.hass = this._hass;
+      picker.value = this._currentPath();
+    }
+    const form = this.shadowRoot.getElementById('ha-form');
+    if (form) {
+      form.data = { mode: this._config.mode || 'popup' };
+    }
+  }
+
+  _fireConfigChanged() {
+    this.dispatchEvent(new CustomEvent('config-changed', {
+      detail: { config: this._config },
+      bubbles: true,
+      composed: true,
+    }));
+  }
+}
+
+customElements.define('global-cards-editor', GlobalCardsEditor);
