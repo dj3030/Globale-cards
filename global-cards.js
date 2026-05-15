@@ -39,15 +39,15 @@ class GlobalCards extends HTMLElement {
     const modeChanged = config.mode !== prevMode;
 
     if ((sourceChanged || modeChanged) && this._loaded) {
-      // Reset and reload with new config
       this._cleanup();
       if (config.source_dashboard?.trim() && this._hass) {
         this._loaded = true;
         this._loadCards();
+        return;
       }
-    } else {
-      this._updateVisibility();
     }
+
+    this._updateVisibility();
   }
 
   set hass(hass) {
@@ -133,19 +133,32 @@ class GlobalCards extends HTMLElement {
   _updateVisibility() {
     const host = this.getRootNode()?.host;
     const huiCard = host?.tagName?.toLowerCase() === 'hui-card' ? host : null;
+    const editMode = this._isEditMode();
+    const hasSource = !!this._config.source_dashboard?.trim();
 
     if (this._isInline()) {
       this.style.cssText = '';
       if (huiCard) huiCard.style.cssText = '';
-      if (this._isEditMode()) {
-        this._showEditBadge();
+
+      if (editMode) {
+        const hasCards = this._cardCount > 0 && !!this._container;
+        if (!hasSource || !hasCards) {
+          this._hideEditBadge();
+          this._contentEl.querySelector('.gcc-status')?.remove();
+          this._showEditCard();
+        } else {
+          this._contentEl.querySelector('.gcc-status')?.remove();
+          this._showEditBadge();
+        }
       } else {
         this._hideEditBadge();
+        this._contentEl.querySelector('.gcc-status')?.remove();
       }
       return;
     }
 
-    if (this._isEditMode()) {
+    // Popup mode
+    if (editMode) {
       this.style.cssText = '';
       if (huiCard) huiCard.style.cssText = '';
       this._showEditCard();
@@ -180,7 +193,7 @@ class GlobalCards extends HTMLElement {
     }
 
     this._contentEl.innerHTML = `
-      <div style="
+      <div class="gcc-status" style="
         padding: 12px 16px; border-radius: 12px;
         background: #1a1a2e; border: 1px solid ${color};
         color: ${color}; font-size: 13px; font-family: monospace;
