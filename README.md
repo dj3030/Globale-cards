@@ -17,7 +17,7 @@ The card is completely invisible when not in edit mode and takes no space in the
 
 1. Open HACS in Home Assistant
 1. On the top right side, click the three dot and click Custom repositories
-1. Where asked for a URL, paste the link of this repository: [https://github.com/ndesgranges/simple-plant](https://github.com/dj3030/Global-cards)
+1. Where asked for a URL, paste the link of this repository: [https://github.com/dj3030/Global-cards](https://github.com/dj3030/Global-cards)
 1. Where asked for a type, select Dashboard
 1. Click the download button. ⬇️
 
