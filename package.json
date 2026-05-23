@@ -1,0 +1,14 @@
+{
+  "name": "global-cards",
+  "version": "1.0.0",
+  "description": "Define cards once, reuse them across multiple dashboards.",
+  "type": "module",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "rollup": "^4.0.0"
+  }
+}
