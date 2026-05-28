@@ -4,10 +4,8 @@ A custom [Home Assistant](https://www.home-assistant.io) Lovelace card that lets
 
 ## What it does
 
-- **Popup mode** *(default)*: Loads cards (e.g. Bubble Card pop-ups) from a source dashboard into the current dashboard. Pop-ups become accessible via their hash (e.g. `#my-popup`) from anywhere on the page.
+- **Popup mode** *(default)*: Injects cards (e.g. Bubble Card pop-ups) invisibly into the current dashboard. Pop-ups become accessible via their hash (e.g. `#my-popup`) from anywhere on the page.
 - **Inline mode**: Renders cards visually in place — useful for global headers or shared UI sections.
-
-The card is completely invisible when not in edit mode and takes no space in the dashboard layout.
 
 -----
 
@@ -30,12 +28,6 @@ The card is completely invisible when not in edit mode and takes no space in the
 - URL: `/local/global-cards.js`
 - Type: `JavaScript module`
 1. Hard refresh your browser (`Ctrl+Shift+R` / `Cmd+Shift+R`)
-
------
-
-## How it works
-
-Global Cards reads cards from a **source** — either a dedicated dashboard or a specific view within any existing dashboard. You then place `custom:global-cards` on other dashboards to pull those cards in. Nothing changes on the source dashboard itself.
 
 -----
 
