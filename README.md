@@ -71,55 +71,6 @@ source_view: popups          # optional: a specific view path or title
 
 -----
 
-## Examples
-
-### Global Bubble Card pop-ups
-
-Define your Bubble Card pop-ups once in a dedicated view (e.g. a "Popups" view on your "Overview" dashboard):
-
-```yaml
-# In your "Popups" view
-type: custom:bubble-card
-card_type: pop-up
-hash: "#lights"
-name: Lights
-```
-
-Then on any other dashboard:
-
-```yaml
-type: custom:global-cards
-source_dashboard: overview
-source_view: popups
-```
-
-Call the pop-up from a button:
-
-```yaml
-type: custom:bubble-card
-card_type: button
-button_type: name
-button_action:
-  tap_action:
-    action: navigate
-    navigation_path: "#lights"
-```
-
------
-
-### Global header (inline mode)
-
-Define a header view once with your preferred sections layout, then embed it on every dashboard:
-
-```yaml
-type: custom:global-cards
-source_dashboard: overview
-source_view: header
-mode: inline
-```
-
------
-
 ## Edit mode
 
 In edit mode, the card shows a status indicator with the source dashboard, view, and number of loaded cards. Outside edit mode it is completely invisible and takes no space in the layout.
@@ -128,7 +79,7 @@ In edit mode, the card shows a status indicator with the source dashboard, view,
 
 ## Tips
 
-> **After editing a source view, refresh your browser.** Global Cards caches the source dashboard config for 60 seconds. If you add, remove, or change cards in your source view, a browser refresh is needed to pick up the changes on other dashboards.
+> **After editing a source view, refresh your browser.** If you add, remove, or change cards in your source view, a browser refresh is needed to pick up the changes on other dashboards.
 
 -----
 
