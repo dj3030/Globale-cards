@@ -1,6 +1,6 @@
 {
   "name": "global-cards",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Define cards once, reuse them across multiple dashboards.",
   "type": "module",
   "scripts": {

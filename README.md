@@ -118,10 +118,11 @@ In edit mode, the card shows a status indicator with the source dashboard, view,
 
 ## Releases
 
-# V1.0.0
-Initial release
-# V1.1.0
-Added UI editor
+| Version | Changes |
+|---------|---------|
+| **V1.2.0** | Fixed inline mode for sections-type and grid-layout views (`hui-section` CSS variable handling); restructured project to `src/dist` layout |
+| **V1.1.0** | Added UI editor |
+| **V1.0.0** | Initial release |
 
 -----
 
