@@ -41,29 +41,41 @@ const FLAT_CONTAINER_STYLE = `
   gap: var(--masonry-view-card-margin, 8px);
 `;
 
-// Håndterer fjernelse af popup-containere når brugeren
-// navigerer til source dashboard for at undgå hash-konflikter.
+// Removes popup containers when the user navigates to the source dashboard/view
+// to prevent Bubble Card from registering the same hashes twice.
 
-const _registry = new Map(); // cacheKey → { container, sourceDashboard }
+const _registry = new Map(); // cacheKey → { container, sourceDashboard, sourceView }
+
+let _lastPathname = window.location.pathname;
 
 function _handleNavigation() {
+  const pathname = window.location.pathname;
+
+  // Ignore pure hash changes (e.g. Bubble Card popup activation via #hash).
+  // Only act on actual page/view navigations.
+  if (pathname === _lastPathname) return;
+  _lastPathname = pathname;
+
   for (const entry of _registry.values()) {
-    const onSource = window.location.pathname.includes(`/${entry.sourceDashboard}`);
+    // Match the exact source path so dashboards whose url_path is a substring
+    // of another (e.g. "lovelace" vs "lovelace/main") don't cause false positives.
+    const sourcePath = entry.sourceView
+      ? `/${entry.sourceDashboard}/${entry.sourceView}`
+      : `/${entry.sourceDashboard}`;
+
+    const onSource = pathname === sourcePath || pathname.startsWith(sourcePath + '/');
 
     if (onSource && entry.container.isConnected) {
-      // Fjern container så Bubble Card ikke registrerer samme hashes to gange
       entry.container.remove();
     }
-    // Vi genindsætter IKKE her — det sker via connectedCallback
-    // når global-cards elementet loades på den rigtige side igen
   }
 }
 
 window.addEventListener('location-changed', _handleNavigation);
 window.addEventListener('popstate', _handleNavigation);
 
-function registerPopupContainer(key, container, sourceDashboard) {
-  _registry.set(key, { container, sourceDashboard });
+function registerPopupContainer(key, container, sourceDashboard, sourceView) {
+  _registry.set(key, { container, sourceDashboard, sourceView });
 }
 
 function unregisterPopupContainer(key) {
@@ -349,6 +361,7 @@ async function loadCards(instance) {
       instance._cards = Array.from(existing.querySelectorAll(':scope > *'));
       instance._cardCount = instance._cards.length;
       for (const card of instance._cards) card.hass = hass;
+      registerPopupContainer(key, existing, config.source_dashboard, config.source_view);
       instance._updateVisibility();
       return;
     }
@@ -382,7 +395,7 @@ async function loadCards(instance) {
     instance._cards = result.cards;
     instance._cardCount = result.cardCount;
 
-    registerPopupContainer(key, container, config.source_dashboard);
+    registerPopupContainer(key, container, config.source_dashboard, config.source_view);
     instance._updateVisibility();
     return;
   }
@@ -573,14 +586,12 @@ class GlobalCards extends HTMLElement {
     this._cards = [];
     this._cardCount = 0;
 
-    // Fjern container uanset mode — popup-kort må kun eksistere
-    // på sider som har global-cards placeret
     if (this._container) {
-      if (!this._isInline()) {
-        cleanupPopupContainer(cacheKey(this._config));
-      } else {
+      if (this._isInline()) {
         this._container.remove();
       }
+      // Popup containers stay in the DOM so Bubble Card remains registered.
+      // navigation.js removes them only when navigating to the source dashboard.
       this._container = null;
     }
 

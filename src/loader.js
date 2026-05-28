@@ -280,6 +280,7 @@ export async function loadCards(instance) {
       instance._cards = Array.from(existing.querySelectorAll(':scope > *'));
       instance._cardCount = instance._cards.length;
       for (const card of instance._cards) card.hass = hass;
+      registerPopupContainer(key, existing, config.source_dashboard, config.source_view);
       instance._updateVisibility();
       return;
     }
@@ -313,7 +314,7 @@ export async function loadCards(instance) {
     instance._cards = result.cards;
     instance._cardCount = result.cardCount;
 
-    registerPopupContainer(key, container, config.source_dashboard);
+    registerPopupContainer(key, container, config.source_dashboard, config.source_view);
     instance._updateVisibility();
     return;
   }

@@ -134,6 +134,12 @@ In edit mode, the card shows a status indicator with the source dashboard, view,
 
 -----
 
+## Tips
+
+> **After editing a source view, refresh your browser.** Global Cards caches the source dashboard config for 60 seconds. If you add, remove, or change cards in your source view, a browser refresh is needed to pick up the changes on other dashboards.
+
+-----
+
 ## Releases
 
 | Version | Changes |

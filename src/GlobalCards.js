@@ -80,14 +80,12 @@ export class GlobalCards extends HTMLElement {
     this._cards = [];
     this._cardCount = 0;
 
-    // Fjern container uanset mode — popup-kort må kun eksistere
-    // på sider som har global-cards placeret
     if (this._container) {
-      if (!this._isInline()) {
-        cleanupPopupContainer(cacheKey(this._config));
-      } else {
+      if (this._isInline()) {
         this._container.remove();
       }
+      // Popup containers stay in the DOM so Bubble Card remains registered.
+      // navigation.js removes them only when navigating to the source dashboard.
       this._container = null;
     }
 
