@@ -33,20 +33,48 @@ The card is completely invisible when not in edit mode and takes no space in the
 
 -----
 
+## How it works
+
+Global Cards reads cards from a **source** — either a dedicated dashboard or a specific view within any existing dashboard. You then place `custom:global-cards` on other dashboards to pull those cards in. Nothing changes on the source dashboard itself.
+
+-----
+
 ## Setup
 
-### 1. Create a source dashboard
+### 1. Choose a source
 
-Create a dashboard in Home Assistant (e.g. `Global Cards`) and add the cards you want to share — Bubble Card pop-ups, headers, or any other cards.
+You need a dashboard (or a view within a dashboard) that contains the cards you want to share.
 
-Find the dashboard’s **url_path** under **Settings → Dashboards → (your dashboard) → edit**.
+**Option A — Use a view on an existing dashboard** *(recommended)*  
+Add a dedicated view (e.g. "Popups") to any dashboard you already have, and put your shared cards there.
 
-### 2. Add the card to other dashboards
+**Option B — Create a dedicated dashboard**  
+Create a new dashboard (e.g. named `Global Cards`) to hold all your shared cards.
+
+---
+
+### 2. Find the url_path
+
+`source_dashboard` requires the dashboard’s **url_path** — the segment after `/lovelace/` in the browser address bar:
+
+```
+http://homeassistant.local:8123/lovelace/overview
+                                          ^^^^^^^^
+                                          url_path = "overview"
+```
+
+Navigate to the dashboard in your browser to see its url_path.
+
+> **Note:** The dashboard edit dialog (Settings → Dashboards → ⋮ → Edit) only shows Title and Icon — it does **not** display the url_path. Use the browser address bar instead.
+
+---
+
+### 3. Add the card to other dashboards
 
 ```yaml
 type: custom:global-cards
-source_dashboard: global-cards-dashboard   # url_path of your source dashboard
-source_view: popups                         # optional: specific view path or title
+source_dashboard: overview   # url_path of your source dashboard
+source_view: popups          # optional: a specific view path or title
 ```
 
 -----
@@ -65,10 +93,10 @@ source_view: popups                         # optional: specific view path or ti
 
 ### Global Bubble Card pop-ups
 
-Define your bubble card pop-ups once on a `global-cards` dashboard:
+Define your Bubble Card pop-ups once in a dedicated view (e.g. a "Popups" view on your "Overview" dashboard):
 
 ```yaml
-# On your "global-cards" dashboard
+# In your "Popups" view
 type: custom:bubble-card
 card_type: pop-up
 hash: "#lights"
@@ -79,7 +107,7 @@ Then on any other dashboard:
 
 ```yaml
 type: custom:global-cards
-source_dashboard: global-cards-dashboard
+source_dashboard: overview
 source_view: popups
 ```
 
@@ -103,7 +131,7 @@ Define a header view once with your preferred sections layout, then embed it on 
 
 ```yaml
 type: custom:global-cards
-source_dashboard: global-cards-dashboard
+source_dashboard: overview
 source_view: header
 mode: inline
 ```
