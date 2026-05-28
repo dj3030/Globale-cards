@@ -1,5 +1,6 @@
 {
   "name": "Global Cards",
-  "render_readme": true,
-  "filename": "global-cards.js"
+  "content_in_root": false,
+  "filename": "dist/global-cards.js",
+  "render_readme": true
 }

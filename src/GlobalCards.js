@@ -1,5 +1,5 @@
 import { HOST_STYLE, POPUP_HIDDEN_STYLE } from './styles.js';
-import { loadCards, cacheKey } from './loader.js';
+import { loadCards, cleanupPopupContainer, cacheKey } from './loader.js';
 import {
   getHuiRoot,
   isEditMode,
@@ -29,7 +29,7 @@ export class GlobalCards extends HTMLElement {
     this._loadId = 0;
     this._hass = null;
     this._config = {};
-    this._huiRootCache = null;
+
     this._updateVisibility = this._updateVisibility.bind(this);
   }
 
@@ -80,10 +80,16 @@ export class GlobalCards extends HTMLElement {
     this._cards = [];
     this._cardCount = 0;
 
-    if (this._isInline() && this._container) {
-      this._container.remove();
+    // Fjern container uanset mode — popup-kort må kun eksistere
+    // på sider som har global-cards placeret
+    if (this._container) {
+      if (!this._isInline()) {
+        cleanupPopupContainer(cacheKey(this._config));
+      } else {
+        this._container.remove();
+      }
+      this._container = null;
     }
-    this._container = null;
 
     teardownEditModeWatcher({ editObserver: null }, this._updateVisibility);
   }
@@ -134,7 +140,11 @@ export class GlobalCards extends HTMLElement {
   _cleanup() {
     this._loadId++;
     if (this._container) {
-      this._container.remove();
+      if (!this._isInline()) {
+        cleanupPopupContainer(cacheKey(this._config));
+      } else {
+        this._container.remove();
+      }
       this._container = null;
     }
     this._contentEl.innerHTML = '';
