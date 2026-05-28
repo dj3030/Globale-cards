@@ -53,27 +53,17 @@ Create a new dashboard (e.g. named `Global Cards`) to hold all your shared cards
 
 ---
 
-### 2. Find the url_path
+### 2. Add the card and pick your source
 
-`source_dashboard` requires the dashboard’s **url_path** — the segment after `/lovelace/` in the browser address bar:
+Add a new `custom:global-cards` card to any dashboard. The built-in UI editor lets you search for and select your source view directly from a dropdown — all your dashboards and views are listed with their paths, so there is no need to look anything up manually.
 
-```
-http://homeassistant.local:8123/lovelace/overview
-                                          ^^^^^^^^
-                                          url_path = "overview"
-```
+![Global Cards editor](images/editor.png)
 
-Navigate to the dashboard in your browser to see its url_path.
-
-> **Note:** The dashboard edit dialog (Settings → Dashboards → ⋮ → Edit) only shows Title and Icon — it does **not** display the url_path. Use the browser address bar instead.
-
----
-
-### 3. Add the card to other dashboards
+> **Configuring via YAML?** Set `source_dashboard` to the url_path of the dashboard — the segment after `/lovelace/` in the browser address bar (e.g. `overview`). The dashboard edit dialog in Settings only shows Title and Icon; use the address bar instead.
 
 ```yaml
 type: custom:global-cards
-source_dashboard: overview   # url_path of your source dashboard
+source_dashboard: overview   # url_path of the source dashboard
 source_view: popups          # optional: a specific view path or title
 ```
 
