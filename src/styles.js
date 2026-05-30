@@ -1,4 +1,7 @@
-export const HOST_STYLE = ':host { display: block; width: 100%; box-sizing: border-box; }';
+// min-width:0 is the canonical CSS Grid fix: without it the grid track expands
+// to fit the shadow host's min-content width instead of its assigned track size.
+// overflow:hidden ensures inner content wider than the track is clipped, not leaked.
+export const HOST_STYLE = ':host { display: block; width: 100%; min-width: 0; overflow: hidden; box-sizing: border-box; }';
 
 export const STATUS_CARD_STYLE = `
   padding: 12px 16px; border-radius: 12px;
