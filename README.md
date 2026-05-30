@@ -87,6 +87,7 @@ In edit mode, the card shows a status indicator with the source dashboard, view,
 
 | Version | Changes |
 |---------|---------|
+| **V1.2.1** | Fixed inline mode card sizing to match the source dashboard on both sections views and custom/grid-layout views |
 | **V1.2.0** | Fixed inline mode for sections-type and grid-layout views (`hui-section` CSS variable handling); restructured project to `src/dist` layout |
 | **V1.1.0** | Added UI editor |
 | **V1.0.0** | Initial release |
